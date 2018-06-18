@@ -13,9 +13,10 @@ export class GitTestHelper
 
         process.chdir(dir);
         await execa("git", ["init"]);
-
+        await execa("git", ["config", "user.email", "none@localhost"]);
+        await execa("git", ["config", "user.name", "unit_test"]);
         await GitTestHelper.checkout(branch);
-        
+
         return fileUrl(dir);
     }
 
