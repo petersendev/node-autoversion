@@ -17,7 +17,7 @@ export class GitTestHelper
         await execa("git", ["config", "user.name", "unit_test"]);
         await GitTestHelper.checkout(branch);
 
-        return fileUrl(dir);
+        return dir;
     }
 
     static async checkout(branch: string, create: boolean = true)
@@ -25,7 +25,7 @@ export class GitTestHelper
         await execa('git', create ? ['checkout', '-b', branch] : ['checkout', branch]);
     }
 
-    static async doCommits(...messages: string[])
+    static async commit(...messages: string[])
     {
         await pReduce(
             messages,
@@ -41,6 +41,12 @@ export class GitTestHelper
         return (await GitTestHelper.getCommits()).slice(0, messages.length);
     }
 
+    static async tag(tagName: string, sha?: string)
+    {
+        await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName]);
+    }
+
+    // redundant implementation to test against if the actual implementation changes
     static async getCommits(from?: string)
     {
         Object.assign(gitLogParser.fields, { hash: 'H', message: 'B', gitTags: 'd', committerDate: { key: 'ci', type: Date } });
